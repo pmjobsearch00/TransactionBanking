@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css"
+	th:href="@{css/bootstrap.min.css}" />
+
+<script type="text/javascript" src="/js/bootstrap.min.js"
+	th:src="@{/js/bootstrap.min.js}"></script>
+<script type="text/javascript" src="/js/jquery.min.js"
+	th:src="@{/js/jquery.min.js}"></script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>WELCOME TO 500X TRANSACTION BANKING</title>
+
+<style>
+.row.no-gutter {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.row.no-gutter [class*='col-']:not (:first-child ), .row.no-gutter [class*='col-']:not
+	(:last-child ) {
+	padding-right: 0;
+	padding-left: 0;
+}
+
+::-webkit-scrollbar {
+   width: 5px;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+</style>
+
+</head>
+
+<script type="text/javascript">
+	function doCancel(id) {
+		location.reload();
+	}
+
+	function doRefresh(id) {
+		document.location.href = "/";
+	}
+</script>
+
+<body>
+
+	<nav class="navbar navbar-inverse">
+		<h4 align="center"
+			style="font-size: 25px; color: #6A5ACD; margin-top: 15px;">
+			WELCOME TO 500X TRANSACTION BANKING</h4>
+	</nav>
+
+	<div class="container">
+
+
+
+		<div class="row no-gutter">
+			<div class="col-xs-12 col-sm-6">
+
+				<div class="panel panel-primary">
+					<div class="panel-heading">Account Lookup</div>
+					<div class="panel-body">
+
+
+						<hr>
+
+						<h4 align="center"
+							style="font-size: 25px; color: #6A5ACD; margin-top: 1px;">
+							Recently created accounts: &nbsp;&nbsp;&nbsp;
+
+							<button type="button" class="btn btn-primary" id="cancelButton"
+								onclick="doRefresh(this.id)">Refresh</button>
+						</h4>
+						<hr>
+
+
+						<div th:if="${not #lists.isEmpty(accountList)}">
+							<table class="table table-striped">
+								<tr>
+									<th>Account Id</th>
+									<th>Balance</th>
+									<th>Currency</th>
+									<th>Opening Date</th>
+								</tr>
+								<tr th:each="account : ${accountList}">
+									<td th:text="${account.id}"></td>
+									<td th:text="${account.balance}"></td>
+									<td th:text="${account.currency}"></td>
+									<td th:text="${account.createdAt}"></td>
+								</tr>
+							</table>
+						</div>
+
+						<th:block th:if="${errorMsg0 != null}">
+							<div class="alert alert-info fade in">
+								<strong><span th:text="${errorMsg0}"></span> </strong>
+							</div>
+						</th:block>
+
+
+					</div>
+				</div>
+				
+				
+				<div class="panel panel-primary">
+					<div class="panel-heading">Transaction Records</div>
+					<div class="panel-body">
+
+
+						<hr>
+
+						<h4 align="center"
+							style="font-size: 25px; color: #6A5ACD; margin-top: 1px;">
+							Recent Transactions: &nbsp;&nbsp;&nbsp;
+
+							<button type="button" class="btn btn-primary" id="cancelButton"
+								onclick="doRefresh(this.id)">Refresh</button>
+						</h4>
+						<hr>
+
+
+						<div th:if="${not #lists.isEmpty(transactionList)}">
+							<table class="table table-striped">
+								<tr>
+									<th>Transaction Id</th>
+									<th>Sending Account</th>
+									<th>Receiving Account</th>
+									<th>Amount</th>
+									<th>Currency</th>
+								</tr>
+								<tr th:each="transaction : ${transactionList}">
+									<td th:text="${transaction.id}"></td>
+									<td th:text="${transaction.sourceAccountId}"></td>
+									<td th:text="${transaction.targetAccountId}"></td>
+									<td th:text="${transaction.amount}"></td>
+									<td th:text="${transaction.currency}"></td>
+								</tr>
+							</table>
+						</div>
+
+						<th:block th:if="${errorMsg5 != null}">
+							<div class="alert alert-info fade in">
+								<strong><span th:text="${errorMsg5}"></span> </strong>
+							</div>
+						</th:block>
+
+
+					</div>
+				</div>				
+				
+
+			</div>
+
+			<div class="col-xs-12 col-sm-6">
+				<div class="panel panel-primary">
+					<div class="panel-heading">Account Creation Service</div>
+					<div class="panel-body">
+
+						<form th:object="${accountDTO}" th:action="@{accountCreation}"
+							action="#" method="post"
+							th:style="@{background-color:#F8F8FF; padding: 10px 50px;} ">
+
+							<div class="row">
+
+								<div class="col-xs-6">
+									<label for="j_curr">Select a currency</label> <select
+										class="form-control" th:field="*{currency}">
+										<option value=""></option>
+										<option value="USD">USD</option>
+										<option value="EUR">EUR</option>
+										<option value="INR">INR</option>
+										<option value="GBP">GBP</option>
+									</select>
+								</div>
+
+								<div class="col-xs-6">
+									<label for="j_price">Account balance</label> <input type="text"
+										th:field="*{balance}" placeholder="Initial balance e.g. 2.5">
+								</div>
+
+							</div>
+
+							<br>
+							<div class="row">
+								<div class="col-xs-6"></div>
+								<div class="col-xs-3">
+									<button type="button" class="btn btn-default" id="cancelButton"
+										onclick="doCancel(this.id)">Cancel</button>
+
+								</div>
+								<div class="col-xs-3">
+									<input type="submit" class="btn btn-primary" value="Create"></input>
+								</div>
+							</div>
+						</form>
+
+
+						<br>
+						<th:block th:if="${errorMsg != null}">
+							<div class="alert alert-info fade in">
+								<strong><span th:text="${errorMsg}"></span></strong>
+							</div>
+						</th:block>
+						<th:block th:if="${successMsg != null}">
+							<div class="alert alert-info fade in">
+								<strong><span th:text="${successMsg}"></span>
+
+									<button type="button" class="btn btn-link" id="cancelButton"
+										onclick="doRefresh(this.id)">click to view.</button> </strong>
+							</div>
+						</th:block>
+
+
+					</div>
+				</div>
+
+				<div class="panel panel-primary">
+					<div class="panel-heading">Direct Debit Service</div>
+					<div class="panel-body">
+
+
+
+						<form th:object="${painDTO}" th:action="@{directDebitInitiate}"
+							action="#" method="post"
+							th:style="@{background-color:#F8F8FF; padding: 10px 50px;} ">
+
+							<div class="row">
+
+
+								<div class="col-xs-6">
+									<label for="sending_account">Sending Account</label> <input
+										type="text" th:field="*{sourceAccountId}"
+										placeholder="Amount e.g. 1">
+								</div>
+
+								<div class="col-xs-6">
+									<label for="receiving_account">Receiving Account</label> <input
+										type="text" th:field="*{targetAccountId}"
+										placeholder="Amount e.g. 2">
+								</div>
+
+							</div>
+							<br>
+							<div class="row">
+
+								<div class="col-xs-6">
+									<label for="j_curr">Select a currency</label> <select
+										class="form-control" th:field="*{currency}">
+										<option value=""></option>
+										<option value="USD">USD</option>
+										<option value="EUR">EUR</option>
+										<option value="INR">INR</option>
+										<option value="GBP">GBP</option>
+									</select>
+								</div>
+
+								<div class="col-xs-6">
+									<label for="j_price">Amount</label> <input type="text"
+										th:field="*{amount}" placeholder="Amount e.g. 2.5">
+								</div>
+
+							</div>
+
+							<br>
+							<div class="row">
+								<div class="col-xs-6"></div>
+								<div class="col-xs-3">
+									<button type="button" class="btn btn-default" id="cancelButton"
+										onclick="doCancel(this.id)">Cancel</button>
+
+								</div>
+								<div class="col-xs-3">
+									<input type="submit" class="btn btn-primary" value="Transfer"></input>
+								</div>
+							</div>
+						</form>
+
+
+						<br>
+						<th:block th:if="${errorMsg1 != null}">
+							<div class="alert alert-info fade in">
+								<strong><span th:text="${errorMsg1}"></span>
+									<button type="button" class="btn btn-link" id="cancelButton"
+										onclick="doRefresh(this.id)">go back.</button> </strong>
+							</div>
+						</th:block>
+						
+						<th:block th:if="${successMsg1 != null}">
+							<div class="alert alert-info fade in">
+								<strong><span th:text="${successMsg1}"></span>
+									<button type="button" class="btn btn-link" id="cancelButton"
+										onclick="doRefresh(this.id)">go back.</button> </strong>
+							</div>
+						</th:block>
+
+
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
+
+
+
+
+
+	</div>
+
+
+</body>
+</html>
