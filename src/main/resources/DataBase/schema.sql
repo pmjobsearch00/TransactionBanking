@@ -1,7 +1,3 @@
-drop table if exists BOOKINGS;
-create table BOOKINGS(ID serial, FIRST_NAME varchar(5) NOT NULL);
-
-
 
 DROP TABLE IF EXISTS ACCOUNTS;
 DROP TABLE IF EXISTS TRANSACTIONS;
