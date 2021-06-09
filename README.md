@@ -39,4 +39,8 @@ http://localhost:8080/
 ![newOrder](doc/GUITest.jpg)
 
 
+
+A quick note about SEPA, PSD II
+-------------------------------
+
 ![Further-Read](doc/SEPA.jpg)
