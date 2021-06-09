@@ -147,7 +147,7 @@ public class WebMVCController {
 			}
 
 			transactionService.directDebit(dto);
-			model.addAttribute("successMsg1", "Direct debit balance transfer completed: ");
+			model.addAttribute("successMsg1", "Credit transfer request is completed: ");
 
 		} catch (ServiceException ei) {
 			LOGGER.debug("++++++++++++++++++++++++++++: " + ei.getService());
