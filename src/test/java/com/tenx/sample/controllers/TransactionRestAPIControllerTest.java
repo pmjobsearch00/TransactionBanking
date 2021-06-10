@@ -85,7 +85,7 @@ public class TransactionRestAPIControllerTest {
 	public void testDirectDebit_AC1_HappyPath() throws Exception {
 		String painJson = "{\"sourceAccountId\":\"1\",\"targetAccountId\":\"2\",\"amount\":\"5.0\",\"currency\":\"USD\"}";
 
-		mvc.perform(post("/v1/accounts/directDebitPaymentInitiationService").content(painJson).contentType(MediaType.APPLICATION_JSON)
+		mvc.perform(post("/v1/accounts/creditTransferPaymentInitiationService").content(painJson).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(content().string(containsString("5.0")))
 				.andExpect(content().string(containsString("USD")));
@@ -106,7 +106,7 @@ public class TransactionRestAPIControllerTest {
 	public void testDirectDebit_AC2_InsufficientBalance() throws Exception {
 		String painJson = "{\"sourceAccountId\":\"1\",\"targetAccountId\":\"2\",\"amount\":\"50.0\",\"currency\":\"USD\"}";
 
-		mvc.perform(post("/v1/accounts/directDebitPaymentInitiationService").content(painJson).contentType(MediaType.APPLICATION_JSON)
+		mvc.perform(post("/v1/accounts/creditTransferPaymentInitiationService").content(painJson).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().string("Sending account does not have sufficient balance for this transfer!"));
@@ -120,7 +120,7 @@ public class TransactionRestAPIControllerTest {
 	public void testDirectDebit_AC3_SameAccount() throws Exception {
 		String painJson = "{\"sourceAccountId\":\"1\",\"targetAccountId\":\"1\",\"amount\":\"5.0\",\"currency\":\"USD\"}";
 
-		mvc.perform(post("/v1/accounts/directDebitPaymentInitiationService").content(painJson).contentType(MediaType.APPLICATION_JSON)
+		mvc.perform(post("/v1/accounts/creditTransferPaymentInitiationService").content(painJson).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().string("Both the sending and receiving accounts are same."));
@@ -134,7 +134,7 @@ public class TransactionRestAPIControllerTest {
 	public void testDirectDebit_AC4_AccountDoesNotExists() throws Exception {
 		String painJson = "{\"sourceAccountId\":\"500\",\"targetAccountId\":\"1\",\"amount\":\"5.0\",\"currency\":\"USD\"}";
 
-		mvc.perform(post("/v1/accounts/directDebitPaymentInitiationService").content(painJson).contentType(MediaType.APPLICATION_JSON)
+		mvc.perform(post("/v1/accounts/creditTransferPaymentInitiationService").content(painJson).contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().string("One or more accounts do not exist!"));

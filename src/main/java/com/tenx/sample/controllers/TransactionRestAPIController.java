@@ -47,24 +47,24 @@ public class TransactionRestAPIController {
 
 
 	/**
-	 * Direct Debit Payment Initiation - PAIN001
+	 * Credit Transfer Payment Initiation - PAIN001
 	 */
-	@RequestMapping(value = "/v1/accounts/directDebitPaymentInitiationService", method = RequestMethod.POST)
+	@RequestMapping(value = "/v1/accounts/creditTransferPaymentInitiationService", method = RequestMethod.POST)
 	public ResponseEntity<?> directDebit(@RequestBody final PainDTO dto) {
 
 		try {
 
-			return new ResponseEntity<>(service.directDebit(dto), HttpStatus.OK);
+			return new ResponseEntity<>(service.creditTransfer(dto), HttpStatus.OK);
 
 		} catch (TransactionNotFoundException e) {
 			LOGGER.debug("++++++++++++++++++++++++++++: " + e.getMessage());
-			return new ResponseEntity<>("Direct debit could not be completed!", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Credit Transfer could not be completed!", HttpStatus.BAD_REQUEST);
 		} catch (ServiceException e) {
 			LOGGER.debug("++++++++++++++++++++++++++++: " + e.getService());
 			return new ResponseEntity<>(e.getService(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			LOGGER.debug("++++++++++++++++++++++++++++: " + e.getMessage());
-			return new ResponseEntity<>("Direct debit could not be initiated!", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Credit Transfer could not be initiated!", HttpStatus.BAD_REQUEST);
 		}
 
 	}

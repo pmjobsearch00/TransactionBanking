@@ -121,7 +121,7 @@ public class WebMVCController {
 	 * direct debit payment
 	 */
 
-	@RequestMapping(value = "/directDebitInitiate", method = RequestMethod.POST)
+	@RequestMapping(value = "/creditTransferInitiate", method = RequestMethod.POST)
 	public String directDebitInitiate(PainDTO dto, BindingResult result, Model model) {
 
 		try {
@@ -146,7 +146,7 @@ public class WebMVCController {
 				return "home";
 			}
 
-			transactionService.directDebit(dto);
+			transactionService.creditTransfer(dto);
 			model.addAttribute("successMsg1", "Credit transfer request is completed: ");
 
 		} catch (ServiceException ei) {

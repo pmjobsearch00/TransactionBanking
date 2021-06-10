@@ -105,6 +105,25 @@ public class AccountsRepository {
 			throw new AccountNotFoundException("account could not be found.");
 		}
 	}
+	
+	@Transactional
+	public boolean updateAccountBalance(Double balance, Long id) {
+		
+		int result = jdbcTemplate.update(SQLStatements.SQL_UPDATE_AMOUNT, balance, id);
+
+		if (result > 0) {
+			log.info("account balance updated with updateAccountBalance(balance, id)");
+			log.info("--------------------------------");
+			log.info(String.valueOf(id));
+			log.info("");
+			return true;
+		} else {
+			log.info("account balance couldn't be updated with updateAccountBalance(balance, id)");
+			log.info("--------------------------------");
+			log.info(String.valueOf(id));
+			return false;
+		}
+	}
 
 	@Transactional
 	public List<Account> getAllAccounts() {

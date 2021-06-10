@@ -17,7 +17,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -26,12 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.tenx.sample.constants.SQLStatements;
 import com.tenx.sample.dto.PainDTO;
-import com.tenx.sample.exceptions.AccountNotFoundException;
 import com.tenx.sample.exceptions.ServiceException;
 import com.tenx.sample.exceptions.TransactionNotFoundException;
-import com.tenx.sample.model.Account;
 import com.tenx.sample.model.Transaction;
-import com.tenx.sample.utility.AccountRowMapper;
 import com.tenx.sample.utility.TransactionRowMapper;
 
 /**
@@ -53,46 +49,7 @@ public class TransactionsRepository {
 	}
 
 	@Transactional // More details is here https://spring.io/guides/gs/managing-transactions/
-	public Optional<Transaction> directDebit(PainDTO dto) {
-
-		try {
-			// Sending account validation
-			Account sourceAccount = jdbcTemplate.queryForObject(SQLStatements.SQL_FIND_ACCOUNT, new AccountRowMapper(),
-					new Object[] { dto.getSourceAccountId() });
-
-			if (null == sourceAccount) {
-				throw new AccountNotFoundException("Sending account could not be found.");
-			} else if (!sourceAccount.getCurrency().getCurrencyCode().equalsIgnoreCase(dto.getCurrency())) {
-				throw new ServiceException("Selected currency does not match with existing sending account currency.");
-			} else if ((sourceAccount.getBalance() - dto.getAmount()) < 0) {
-				throw new ServiceException("Sending account does not have sufficient balance for this transfer!");
-			}
-			
-			// Target account validation
-			Account targetAccount = jdbcTemplate.queryForObject(SQLStatements.SQL_FIND_ACCOUNT, new AccountRowMapper(),
-					new Object[] { dto.getTargetAccountId() });
-
-			if (null == targetAccount) {
-				throw new AccountNotFoundException("Receiving account could not be found.");
-			} else if (!targetAccount.getCurrency().getCurrencyCode().equalsIgnoreCase(dto.getCurrency())) {
-				throw new ServiceException("Selected account currency does not match with existing Receiving account currency.");
-			} else if (targetAccount.getId().equals(sourceAccount.getId())) {
-				throw new ServiceException("Both the sending and receiving accounts are same.");
-			}
-
-			// Update balance for the sender account
-			jdbcTemplate.update(SQLStatements.SQL_DEDUCT_AMOUNT, (sourceAccount.getBalance() - dto.getAmount()),
-					sourceAccount.getId());
-
-			// Update balance for the receiver account
-			jdbcTemplate.update(SQLStatements.SQL_ADD_AMOUNT, (targetAccount.getBalance() + dto.getAmount()),
-					targetAccount.getId());
-
-			
-        } catch (EmptyResultDataAccessException e) {
-        	throw new ServiceException("One or more accounts do not exist!");
-        }
-		
+	public Optional<Transaction> saveTransaction(PainDTO dto) {
 
 		// Finally insert into transactions table
 		GeneratedKeyHolder holder = new GeneratedKeyHolder();

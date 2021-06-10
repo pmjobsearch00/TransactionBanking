@@ -13,10 +13,16 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tenx.sample.dto.PainDTO;
+import com.tenx.sample.exceptions.AccountNotFoundException;
+import com.tenx.sample.exceptions.ServiceException;
+import com.tenx.sample.model.Account;
 import com.tenx.sample.model.Transaction;
+import com.tenx.sample.repositories.AccountsRepository;
 import com.tenx.sample.repositories.TransactionsRepository;
 
 /**
@@ -28,28 +34,71 @@ import com.tenx.sample.repositories.TransactionsRepository;
 @Service
 public class TransactionServiceImpl implements TransactionService {
 
-	private final TransactionsRepository repository;
+	private final TransactionsRepository transactionsRepository;
+	private final AccountsRepository accountsRepository;
 
 	@Autowired
-	public TransactionServiceImpl(final TransactionsRepository repository) {
-		this.repository = repository;
+	public TransactionServiceImpl(final AccountsRepository accountsRepository,
+			final TransactionsRepository transactionsRepository) {
+		this.accountsRepository = accountsRepository;
+		this.transactionsRepository = transactionsRepository;
 	}
 
 	@Override
-	public Optional<PainDTO> creditTransfer(PainDTO dto) throws Exception {
+	public Optional<PainDTO> directDebit(PainDTO dto) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Optional<PainDTO> directDebit(PainDTO dto) throws Exception {
-		Optional<Transaction> transaction = repository.directDebit(dto);
+	@Transactional 
+	public Optional<PainDTO> creditTransfer(PainDTO dto) throws Exception {
+
+		try {
+			// Source account validation
+
+			Optional<Account> sourceAccount = accountsRepository.getAccountById(dto.getSourceAccountId());
+
+			if (!sourceAccount.isPresent()) {
+				throw new AccountNotFoundException("Sending account could not be found.");
+			} else if (!sourceAccount.get().getCurrency().getCurrencyCode().equalsIgnoreCase(dto.getCurrency())) {
+				throw new ServiceException("Selected currency does not match with existing sending account currency.");
+			} else if ((sourceAccount.get().getBalance() - dto.getAmount()) < 0) {
+				throw new ServiceException("Sending account does not have sufficient balance for this transfer!");
+			}
+
+			// Target account validation
+			Optional<Account> targetAccount = accountsRepository.getAccountById(dto.getTargetAccountId());
+
+			if (!targetAccount.isPresent()) {
+				throw new AccountNotFoundException("Receiving account could not be found.");
+			} else if (!targetAccount.get().getCurrency().getCurrencyCode().equalsIgnoreCase(dto.getCurrency())) {
+				throw new ServiceException(
+						"Selected account currency does not match with existing Receiving account currency.");
+			} else if (targetAccount.get().getId().equals(sourceAccount.get().getId())) {
+				throw new ServiceException("Both the sending and receiving accounts are same.");
+			}
+
+			// Update balance for the source account
+			accountsRepository.updateAccountBalance((sourceAccount.get().getBalance() - dto.getAmount()),
+					sourceAccount.get().getId());
+
+			// Update balance for the target account
+			accountsRepository.updateAccountBalance((targetAccount.get().getBalance() + dto.getAmount()),
+					targetAccount.get().getId());
+
+		} catch (EmptyResultDataAccessException e) {
+			throw new ServiceException("One or more accounts do not exist!");
+		}
+
+		// Create the transaction record.
+		Optional<Transaction> transaction = transactionsRepository.saveTransaction(dto);
 		return backToDto(transaction);
 	}
 
 	@Override
 	public List<PainDTO> getAllTransactions() throws Exception {
-		List<Transaction> transactions = repository.getAllTransactions();
+		List<Transaction> transactions = transactionsRepository.getAllTransactions();
 
 		List<PainDTO> transactionsDtos = new ArrayList<>();
 		for (Transaction trs : transactions) {

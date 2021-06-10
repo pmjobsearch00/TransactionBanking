@@ -15,8 +15,7 @@ public class SQLStatements {
 	
 	public static final String SQL_FIND_TRANSACTION = "select * from transactions where id = ?";
 	
-	public static final String SQL_DEDUCT_AMOUNT = "update accounts set balance = ? where id = ?";
-	public static final String SQL_ADD_AMOUNT = "update accounts set balance = ? where id = ?";
+	public static final String SQL_UPDATE_AMOUNT = "update accounts set balance = ? where id = ?";
 	
 	public static final String SQL_INSERT_TRANSACTION = "insert into transactions(source_account_id, target_account_id, amount, currency) values(?,?,?,?)";
 	public static final String SQL_GET_ALL_TRANSACTION = "select * from transactions";
