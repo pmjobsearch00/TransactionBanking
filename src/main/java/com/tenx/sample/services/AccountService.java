@@ -24,6 +24,6 @@ public interface AccountService {
 
 	Optional<AccountDTO> deleteAccountById(Long id) throws Exception;
     
-    List<AccountDTO> getAllAccounts() throws Exception;
+        List<AccountDTO> getAllAccounts() throws Exception;
 
 }
