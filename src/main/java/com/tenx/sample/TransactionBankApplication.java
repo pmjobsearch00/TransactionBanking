@@ -14,7 +14,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * InterviewApplication is the application runner for the Rest services.
+ * TransactionBankApplication is the application runner for the Rest services.
  *
  * @author Partha Mondal
  */
