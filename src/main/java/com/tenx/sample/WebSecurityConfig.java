@@ -16,7 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
  */
 @Configuration
 @EnableWebSecurity
-@ComponentScan("com.tenx.interview")
+@ComponentScan("com.tenx.sample")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	//Allow all resource security free access as no login is created yet
