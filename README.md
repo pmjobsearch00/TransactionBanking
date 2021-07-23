@@ -44,3 +44,9 @@ A quick note about SEPA, PSD II
 -------------------------------
 
 ![Further-Read](doc/SEPA.jpg)
+
+
+Payments - whare is it going?
+-------------------------------
+
+![Further-Read](doc/Open-Banking.jpg)
