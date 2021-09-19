@@ -50,3 +50,9 @@ Payments - whare is it going?
 -------------------------------
 
 ![Further-Read](doc/Open-Banking.jpg)
+
+
+Payments - how it happens today?
+------------------------------------
+
+![Further-Read](doc/Card-Payment.jpg)
